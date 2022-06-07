@@ -59,14 +59,17 @@ impl ToTokens for Unpattern {
         let pat = &self.pat;
         let expr = &self.expr;
 
-        tokens.extend(quote! {
+        let t = quote! {
+            #[allow(unused_parens)]
             #[allow(irrefutable_let_patterns)]
-            let #(#idents),* = if let #pat = #expr {
-                #(#idents),*
+            let (#(#idents),*) = if let #pat = #expr {
+                (#(#idents),*)
             } else {
                 unreachable!("The pattern isn't match with the expression");
             };
-        });
+        };
+        println!("{}", t);
+        tokens.extend(t);
     }
 }
 
