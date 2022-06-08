@@ -95,6 +95,8 @@ unreachable!()
 - [ ] Implement all patterns
 - [ ] Caret syntax
 
-## Related
+## Related works
 
-[enum-as-inner](https://github.com/bluejekyll/enum-as-inner)
+- StackOverflow question: [#](https://stackoverflow.com/questions/34953711/unwrap-inner-type-when-enum-variant-is-known)
+- [enum-as-inner](https://github.com/bluejekyll/enum-as-inner)
+- [RFC-349](https://github.com/rust-lang/rfcs/issues/349)
