@@ -30,7 +30,7 @@ unpat!(TestEnum::Int(v) <- test); // `v = 3` binding is created here.
 println!("{}", v);
 ```
 
-The concept of the crate is inspired by Elixir's pattern matching.
+The concept of the crate is inspired from Elixir's pattern matching.
 
 ```elixir
 test = %Test{a: 1, b: 2}
