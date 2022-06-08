@@ -96,3 +96,16 @@ fn match_mut_enum() {
     );
     assert_eq!((*int, *x, *y), (1, 2, 3));
 }
+
+#[test]
+fn match_struct() {
+    let test_struct = TestStruct {
+        int: 1,
+        tuple_struct: TupleStruct(2, 3),
+    };
+
+    unpat!(
+        TestStruct { int, tuple_struct: TupleStruct(x, y) } <- test_struct
+    );
+    assert_eq!((int, x, y), (1, 2, 3));
+}
