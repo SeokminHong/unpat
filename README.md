@@ -42,7 +42,7 @@ test = %Test{a: 1, b: 2}
 ```rust
 struct TestStruct {
     int: i32,
-    tuple_struct: (i32, i32),
+    tuple: (i32, i32),
 }
 
 enum TestEnum {
@@ -53,13 +53,13 @@ enum TestEnum {
 
 let test = TestEnum::Struct(TestStruct {
     int: 1,
-    tuple_struct: (2, 3),
+    tuple: (2, 3),
 });
 
 unpat!(
     TestEnum::Struct(
-        TestStruct { int, tuple_struct: (x, y) }
-    ) <- test_struct
+        TestStruct { int, tuple: (x, y) }
+    ) <- test
 );
 assert_eq!((int, x, y), (1, 2, 3));
 ```
@@ -69,8 +69,8 @@ Also, the named field can be bound with the `@` syntax.
 ```rust
 unpat!(
     TestEnum::Struct(
-        TestStruct { int, tuple_struct: v @ (x, y) }
-    ) <- test_struct
+        TestStruct { int, tuple: v @ (x, y) }
+    ) <- test
 );
 assert_eq!((int, x, y), (1, 2, 3));
 assert_eq!(v, (2, 3));
