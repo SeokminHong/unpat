@@ -18,6 +18,9 @@ fn traverse_pat(pat: &Pat, idents: &mut Vec<Ident>) {
         Pat::Ident(ident) => {
             println!("ident: {}", ident.ident);
             idents.push(ident.ident.clone());
+            ident.subpat.iter().for_each(|(_, p)| {
+                traverse_pat(p, idents);
+            });
         }
         Pat::Lit(_) => println!("lit"),
         Pat::Macro(_) => println!("macro"),
@@ -27,7 +30,12 @@ fn traverse_pat(pat: &Pat, idents: &mut Vec<Ident>) {
         Pat::Reference(_) => println!("reference"),
         Pat::Rest(_) => println!("rest"),
         Pat::Slice(_) => println!("slice"),
-        Pat::Struct(_) => println!("struct"),
+        Pat::Struct(s) => {
+            println!("struct");
+            s.fields.iter().for_each(|f| {
+                traverse_pat(&f.pat, idents);
+            })
+        }
         Pat::Tuple(_) => println!("tuple"),
         Pat::TupleStruct(PatTupleStruct { path, pat, .. }) => {
             let seg = path.segments.to_token_stream();
@@ -43,7 +51,6 @@ fn traverse_pat(pat: &Pat, idents: &mut Vec<Ident>) {
 
 impl Parse for Unpattern {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        input.lookahead1();
         let pat = input.parse::<Pat>()?;
         input.parse::<Token![<-]>()?;
         let expr = input.parse::<Expr>()?;
