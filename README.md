@@ -76,7 +76,7 @@ assert_eq!((int, x, y), (1, 2, 3));
 assert_eq!(v, (2, 3));
 ```
 
-## Note
+## Error Handling
 
 `unpat` panics if the pattern doesn't match. If you want to handle the error, use `try_unpat` instead.
 
@@ -94,3 +94,7 @@ unreachable!()
 
 - [ ] Implement all patterns
 - [ ] Caret syntax
+
+## Related
+
+[enum-as-inner](https://github.com/bluejekyll/enum-as-inner)
