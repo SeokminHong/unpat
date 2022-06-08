@@ -80,8 +80,60 @@ impl ToTokens for Unpattern {
     }
 }
 
+struct TryUnpattern {
+    idents: Vec<Ident>,
+    pat: Pat,
+    expr: Expr,
+    error: Expr,
+}
+
+impl Parse for TryUnpattern {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let pat = input.parse::<Pat>()?;
+        input.parse::<Token![<-]>()?;
+        let expr = input.parse::<Expr>()?;
+        input.parse::<Token![,]>()?;
+        let error = input.parse::<Expr>()?;
+        let mut idents = vec![];
+        traverse_pat(&pat, &mut idents);
+        Ok(TryUnpattern {
+            idents,
+            pat,
+            expr,
+            error,
+        })
+    }
+}
+
+impl ToTokens for TryUnpattern {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        let idents = &self.idents;
+        let pat = &self.pat;
+        let expr = &self.expr;
+        let error = &self.error;
+
+        let t = quote! {
+            #[allow(unused_parens)]
+            #[allow(irrefutable_let_patterns)]
+            let (#(#idents),*) = if let #pat = #expr {
+                (#(#idents),*)
+            } else {
+                return ::core::result::Result::Err(#error);
+            };
+        };
+        println!("{}", t);
+        tokens.extend(t);
+    }
+}
+
 #[proc_macro]
 pub fn unpat(token: TokenStream) -> TokenStream {
     let v = parse_macro_input!(token as Unpattern);
+    v.to_token_stream().into()
+}
+
+#[proc_macro]
+pub fn try_unpat(token: TokenStream) -> TokenStream {
+    let v = parse_macro_input!(token as TryUnpattern);
     v.to_token_stream().into()
 }

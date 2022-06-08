@@ -1,4 +1,4 @@
-use unpat::unpat;
+use unpat::{try_unpat, unpat};
 
 #[derive(PartialEq, Debug)]
 struct TupleStruct(i32, i32);
@@ -108,4 +108,15 @@ fn match_struct() {
         TestStruct { int, tuple_struct: TupleStruct(x, y) } <- test_struct
     );
     assert_eq!((int, x, y), (1, 2, 3));
+}
+
+fn try_match_tuple(tuple: Test) -> Result<(i32, f64), String> {
+    try_unpat!(Test::Tuple(a, b) <- tuple, String::from(""));
+    Ok((a, b))
+}
+
+#[test]
+fn try_match_tuple_enum() {
+    assert_eq!((1, 3.5), try_match_tuple(Test::Tuple(1, 3.5)).unwrap());
+    assert!(try_match_tuple(Test::Int(1)).is_err());
 }
