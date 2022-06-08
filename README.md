@@ -16,7 +16,7 @@ enum TestEnum {
 let test = TestEnum::Int(3);
 // You need to unbox the enum.
 if let TestEnum::Int(v) = test {
-    println!("{}", v);
+    assert_eq!(v, 3);
 } else {
     unreachable!();
 }
@@ -27,7 +27,7 @@ This crate helps to unbox the enum from a pattern.
 ```rust
 let test = TestEnum::Int(3);
 unpat!(TestEnum::Int(v) <- test); // `v = 3` binding is created here.
-println!("{}", v);
+assert_eq!(v, 3);
 ```
 
 The concept of the crate is inspired from Elixir's pattern matching.
@@ -74,6 +74,20 @@ unpat!(
 );
 assert_eq!((int, x, y), (1, 2, 3));
 assert_eq!(v, (2, 3));
+```
+
+## Note
+
+`unpat` panics if the pattern doesn't match. If you want to handle the error, use `try_unpat` instead.
+
+```rust
+let test = TestEnum::Int(3);
+try_unpat!(TestEnum::Int(v) <- test, String::from("The pattern doesn't match"));
+assert_eq!(v, 3);
+
+// The pattern doesn't match. It will return Err.
+try_unpat!(TestEnum::Tuple(a, _) <- test, String::from("The pattern doesn't match"));
+unreachable!()
 ```
 
 ## TODO
