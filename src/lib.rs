@@ -16,7 +16,6 @@ fn traverse_pat(pat: &Pat, idents: &mut Vec<Ident>) {
     match pat {
         Pat::Box(_) => println!("box"),
         Pat::Ident(ident) => {
-            println!("ident: {}", ident.ident);
             idents.push(ident.ident.clone());
             ident.subpat.iter().for_each(|(_, p)| {
                 traverse_pat(p, idents);
@@ -30,17 +29,12 @@ fn traverse_pat(pat: &Pat, idents: &mut Vec<Ident>) {
         Pat::Reference(_) => println!("reference"),
         Pat::Rest(_) => println!("rest"),
         Pat::Slice(_) => println!("slice"),
-        Pat::Struct(s) => {
-            println!("struct");
-            s.fields.iter().for_each(|f| {
-                traverse_pat(&f.pat, idents);
-            })
-        }
+        Pat::Struct(s) => s.fields.iter().for_each(|f| {
+            traverse_pat(&f.pat, idents);
+        }),
         Pat::Tuple(_) => println!("tuple"),
-        Pat::TupleStruct(PatTupleStruct { path, pat, .. }) => {
-            let seg = path.segments.to_token_stream();
+        Pat::TupleStruct(PatTupleStruct { pat, .. }) => {
             pat.elems.iter().for_each(|p| traverse_pat(p, idents));
-            println!("tuple struct: {}", seg);
         }
         Pat::Type(_) => println!("type"),
         Pat::Verbatim(_) => println!("verbatim"),
@@ -69,13 +63,13 @@ impl ToTokens for Unpattern {
         let t = quote! {
             #[allow(unused_parens)]
             #[allow(irrefutable_let_patterns)]
+            #[allow(clippy::redundant_pattern_matching)]
             let (#(#idents),*) = if let #pat = #expr {
                 (#(#idents),*)
             } else {
                 unreachable!("The pattern isn't match with the expression");
             };
         };
-        println!("{}", t);
         tokens.extend(t);
     }
 }
@@ -115,13 +109,13 @@ impl ToTokens for TryUnpattern {
         let t = quote! {
             #[allow(unused_parens)]
             #[allow(irrefutable_let_patterns)]
+            #[allow(clippy::redundant_pattern_matching)]
             let (#(#idents),*) = if let #pat = #expr {
                 (#(#idents),*)
             } else {
                 return ::core::result::Result::Err(#error);
             };
         };
-        println!("{}", t);
         tokens.extend(t);
     }
 }
