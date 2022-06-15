@@ -34,7 +34,7 @@ The concept of the crate is inspired from Elixir's pattern matching.
 
 ```elixir
 test = %Test{a: 1, b: 2}
-%Test{a} = test # `a = 1` binding is created here
+%Test{a: a} = test # `a = 1` binding is created here
 ```
 
 ## Usage
